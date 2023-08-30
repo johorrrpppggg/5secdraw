@@ -72,28 +72,44 @@
             }, 5000); // 時間指定
         }
 
-        canvas.addEventListener('mousedown', function(e) {
-            x = e.clientX;
-            y = e.clientY;
+        function handleStart(e) {
+            e.preventDefault();
+            x = e.clientX || e.touches[0].clientX;
+            y = e.clientY || e.touches[0].clientY;
             isDrawing = true;
-        });
+        }
 
-        canvas.addEventListener('mousemove', function(e) {
+        function handleMove(e) {
+            e.preventDefault();
             if (isDrawing === true) {
-                drawLine(x, y, e.clientX, e.clientY);
-                x = e.clientX;
-                y = e.clientY;
+                let newX = e.clientX || e.touches[0].clientX;
+                let newY = e.clientY || e.touches[0].clientY;
+                drawLine(x, y, newX, newY);
+                x = newX;
+                y = newY;
             }
-        });
+        }
 
-        window.addEventListener('mouseup', function(e) {
+        function handleEnd(e) {
+            e.preventDefault();
             if (isDrawing === true) {
-                drawLine(x, y, e.clientX, e.clientY);
+                let newX = e.clientX || e.changedTouches[0].clientX;
+                let newY = e.clientY || e.changedTouches[0].clientY;
+                drawLine(x, y, newX, newY);
                 x = 0;
                 y = 0;
                 isDrawing = false;
             }
-        });
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('touchstart', handleStart);
+
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('touchmove', handleMove);
+
+        window.addEventListener('mouseup', handleEnd);
+        window.addEventListener('touchend', handleEnd);
 
         window.addEventListener('keydown', function(e) {
             if (e.key === 'e') {
